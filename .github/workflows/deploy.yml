@@ -45,8 +45,8 @@ jobs:
           cd Frontend
           npm ci
           CI=false npm run build
-          aws s3 sync build/ s3://${{ secrets.S3_BUCKET }} --delete
-          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+          aws s3 sync build/ s3://${{ secrets.QMAKER_S3_BUCKET }} --delete
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.QMAKER_CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
 
       # Backend, AI 이미지 빌드 및 푸시
       - name: Build and push Docker images
@@ -63,7 +63,7 @@ jobs:
       - name: Deploy Backend_0 services
         run: |
           aws ssm send-command \
-            --instance-ids ${{ env.BACKEND_EC2_HOST_ID_0 }} \
+            --instance-ids ${{ env.QMAKER_BACKEND_EC2_HOST_ID_0 }} \
             --document-name "AWS-RunShellScript" \
             --parameters '{
               "commands": [
@@ -78,7 +78,7 @@ jobs:
       - name: Deploy Backend_1 instance services
         run: |
           aws ssm send-command \
-            --instance-ids ${{ env.BACKEND_EC2_HOST_ID_1 }} \
+          --instance-ids ${{ env.QMAKER_BACKEND_EC2_HOST_ID_1 }} \
             --document-name "AWS-RunShellScript" \
             --parameters '{
               "commands": [
@@ -92,7 +92,7 @@ jobs:
       - name: Deploy AI_0 instance services
         run: |
           aws ssm send-command \
-            --instance-ids ${{ env.AI_EC2_HOST_ID_0 }} \
+            --instance-ids ${{ env.QMAKER_AI_EC2_HOST_ID_0 }} \
             --document-name "AWS-RunShellScript" \
             --parameters '{
               "commands": [
@@ -106,7 +106,7 @@ jobs:
       - name: Deploy AI_1 instance services
         run: |
           aws ssm send-command \
-            --instance-ids ${{ env.AI_EC2_HOST_ID_1 }} \
+            --instance-ids ${{ env.QMAKER_AI_EC2_HOST_ID_1 }} \
             --document-name "AWS-RunShellScript" \
             --parameters '{
               "commands": [
