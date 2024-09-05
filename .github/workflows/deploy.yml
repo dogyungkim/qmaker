@@ -60,21 +60,61 @@ jobs:
           docker push $DOCKER_HUB_USERNAME/qmaker-ai:latest
 
       # Backend 서비스 배포 (AWS Systems Manager 사용)
-      - name: Deploy Backend services
+      - name: Deploy Backend_0 services
         run: |
           aws ssm send-command \
-            --instance-ids ${{ env.BACKEND_EC2_HOST_ID }} \
+            --instance-ids ${{ env.BACKEND_EC2_HOST_ID_0 }} \
             --document-name "AWS-RunShellScript" \
             --parameters '{
               "commands": [
-                "sudo docker stop backend ai || true",
-                "sudo docker rm backend ai || true",
-                "sudo docker image rm ${{ env.DOCKER_HUB_USERNAME }}/qmaker-ai:latest",
+                "sudo docker stop backend || true",
+                "sudo docker rm backend || true",
                 "sudo docker image rm ${{ env.DOCKER_HUB_USERNAME }}/qmaker-backend:latest",
                 "sudo docker pull ${{ env.DOCKER_HUB_USERNAME }}/qmaker-backend:latest",
-                "sudo docker pull ${{ env.DOCKER_HUB_USERNAME }}/qmaker-ai:latest",
                 "sudo docker run -d --name backend --network ec2-user_export_network -p 8080:8080 -e SPRING_DATASOURCE_URL=jdbc:mysql://172.18.0.3:3306/moviedatabase?serverTimezone=Asia/Seoul -e SPRING_DATASOURCE_USERNAME=root -e SPRING_DATASOURCE_PASSWORD=qlalfqjsgh486 -e AI_SERVICE_URL=http://172.18.0.5:8000/api/v1 ${{ env.DOCKER_HUB_USERNAME }}/qmaker-backend:latest",
-                "sudo docker run -d --name ai --network ec2-user_export_network -p 8000:8000 -e PROJECT_NAME=ParseAI -e DATABASE_URL=mysql+aiomysql://root:qlalfqjsgh486@172.18.0.3:3306/moviedatabase ${{ env.DOCKER_HUB_USERNAME }}/qmaker-ai:latest"
+                "sudo docker run -d --name ai --network ec2-user_export_network -p 8000:8000 -e PROJECT_NAME=ParseAI -e DATABASE_URL=mongoDB://root:qlalfqjsgh486@172.18.0.3:3306/moviedatabase ${{ env.DOCKER_HUB_USERNAME }}/qmaker-ai:latest"
+              ]
+            }'
+      - name: Deploy Backend_1 instance services
+        run: |
+          aws ssm send-command \
+            --instance-ids ${{ env.BACKEND_EC2_HOST_ID_1 }} \
+            --document-name "AWS-RunShellScript" \
+            --parameters '{
+              "commands": [
+                "sudo docker stop backend || true",
+                "sudo docker rm backend || true",
+                "sudo docker image rm ${{ env.DOCKER_HUB_USERNAME }}/qmaker-backend:latest",
+                "sudo docker pull ${{ env.DOCKER_HUB_USERNAME }}/qmaker-backend:latest",
+                "sudo docker run -d --name backend --network ec2-user_export_network -p 8080:8080 -e SPRING_DATASOURCE_URL=jdbc:mongoDB://172.18.0.3:3306/moviedatabase?serverTimezone=Asia/Seoul -e SPRING_DATASOURCE_USERNAME=root -e SPRING_DATASOURCE_PASSWORD=qlalfqjsgh486 -e AI_SERVICE_URL=http://172.18.0.5:8000/api/v1 ${{ env.DOCKER_HUB_USERNAME }}/qmaker-backend:latest",
+              ]
+            }'
+      - name: Deploy AI_0 instance services
+        run: |
+          aws ssm send-command \
+            --instance-ids ${{ env.AI_EC2_HOST_ID_0 }} \
+            --document-name "AWS-RunShellScript" \
+            --parameters '{
+              "commands": [
+                "sudo docker stop ai || true",
+                "sudo docker rm ai || true",
+                "sudo docker image rm ${{ env.DOCKER_HUB_USERNAME }}/qmaker-ai:latest",
+                "sudo docker pull ${{ env.DOCKER_HUB_USERNAME }}/qmaker-ai:latest",
+                "sudo docker run -d --name ai --network ec2-user_export_network -p 8000:8000 -e PROJECT_NAME=ParseAI ${{ env.DOCKER_HUB_USERNAME }}/qmaker-ai:latest"
+              ]
+            }'
+      - name: Deploy AI_1 instance services
+        run: |
+          aws ssm send-command \
+            --instance-ids ${{ env.AI_EC2_HOST_ID_1 }} \
+            --document-name "AWS-RunShellScript" \
+            --parameters '{
+              "commands": [
+                "sudo docker stop ai || true",
+                "sudo docker rm ai || true",
+                "sudo docker image rm ${{ env.DOCKER_HUB_USERNAME }}/qmaker-ai:latest",
+                "sudo docker pull ${{ env.DOCKER_HUB_USERNAME }}/qmaker-ai:latest",
+                "sudo docker run -d --name ai --network ec2-user_export_network -p 8000:8000 -e PROJECT_NAME=ParseAI ${{ env.DOCKER_HUB_USERNAME }}/qmaker-ai:latest"
               ]
             }'
 
