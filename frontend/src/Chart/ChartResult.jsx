@@ -26,7 +26,7 @@ function ChartResult() {
     
             // 카테고리 순서대로 scoreObj의 값을 추출하여 배열로 변환
             chartInfo.categories.forEach((category) => {
-                tempScoreList.push(scoreObjs[category] || 0);  // 카테고리 순서대로 값을 가져옴
+                tempScoreList.push(scoreObjs[category] || 0);
             });
     
             sessionStorage.setItem('myScore', JSON.stringify(tempScoreList)); 
@@ -49,7 +49,7 @@ function ChartResult() {
             }
         },
         xaxis: {
-            categories: categories // Set the categories from state
+            categories: categories
         },
         fill: {
             opacity: 0.5
@@ -69,7 +69,18 @@ function ChartResult() {
             min: 0,
             max: 100,
             tickAmount: 5
-        }
+        },
+        plotOptions: {
+            radar: {
+              polygons: {
+                strokeColors: '#e9e9e9',
+                fill: {
+                  colors: ['#f8f8f8', '#fff']
+                }
+              }
+            }
+        },
+        colors: ['#FF4560'],
     };
 
     // Series data for the chart

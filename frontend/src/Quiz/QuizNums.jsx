@@ -13,7 +13,6 @@ function QuizNums({ currentProblem, onProblemSelect }) {
         });
     }, []);
 
-
     return (
         <div className="nums-container">
             {numbers.map((num, index) => {
@@ -26,10 +25,12 @@ function QuizNums({ currentProblem, onProblemSelect }) {
                 const problemStatus = JSON.parse(sessionStorage.getItem('answers')) || Array(10).fill(-1);
 
                 return (
-                    <div className="button-container" key={index}>
-                        <button 
-                            className={`num-button ${index === currentProblem ? 'active' : ''}`}
-                            onClick={() => onProblemSelect(index)}>
+                    <div 
+                        className={`button-container ${index === currentProblem ? 'active' : ''}`}
+                        key={index}
+                        onClick={() => onProblemSelect(index)}
+                    >
+                        <button className="num-button">
                             {formattedNum}. {truncatedTitle}
                         </button>
                         <div className={`status ${problemStatus[index] === -1 ? 'unsolved' : 'solved'}`}></div>

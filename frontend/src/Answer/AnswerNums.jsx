@@ -25,13 +25,14 @@ function AnswerNums({ currentProblem, onProblemSelect, results, userAnswers }) {
         }
 
         return (
-          <div className="a-button-container" key={index}>
-            <button
-              className={`a-num-button ${
-                index === currentProblem ? 'active' : ''
-              }`}
-              onClick={() => onProblemSelect(index)}
-            >
+          <div
+            className={`a-button-container ${
+              index === currentProblem ? 'active' : ''
+            }`}
+            key={index}
+            onClick={() => onProblemSelect(index)}
+          >
+            <button className="a-num-button">
               {formattedNum}. {truncatedTitle}
             </button>
             <div className={`a-status ${statusClass}`}></div>
